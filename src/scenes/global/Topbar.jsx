@@ -14,6 +14,8 @@ import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import DeskIcon from "@mui/icons-material/Desk";
 import { Link, NavLink } from "react-router-dom";
+import Logo1 from "../../data/logo1.png";
+import Logo2 from "../../data/logo2.png";
 
 const Topbar = () => {
   const theme = useTheme();
@@ -28,6 +30,18 @@ const Topbar = () => {
 
   return (
     <Box display="flex" justifyContent="space-between" p={2}>
+      <Box display="flex" style={{}}>
+        <NavLink to="/">
+          <img
+            src={Logo1}
+            alt=""
+            height={40}
+            style={{
+              margin: "10px 0 20px 0",
+            }}
+          />
+        </NavLink>
+      </Box>
       <Box display="flex">
         <ToggleButtonGroup
           color="primary"
@@ -61,6 +75,7 @@ const Topbar = () => {
             Desk 2
           </ToggleButton>
         </ToggleButtonGroup>
+
         {/* <ButtonGroup variant="outlined" aria-label="Basic button group">
           <Button
             component={NavLink}

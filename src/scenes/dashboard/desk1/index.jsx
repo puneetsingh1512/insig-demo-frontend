@@ -8,7 +8,7 @@ import {
   useMaterialReactTable,
   MRT_ExpandAllButton,
 } from "material-react-table";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 // import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
 
 const Desk1 = () => {
@@ -25,17 +25,33 @@ const Desk1 = () => {
 
   const columns1 = useMemo(
     () => [
-      { header: "Order ID", accessorKey: "order_id" },
-      { header: "Basket ID", accessorKey: "basket_id" },
-      { header: "Email", accessorKey: "sender" },
-      { header: "Subject", accessorKey: "subject" },
-      { header: "Date", accessorKey: "date" },
-      { header: "Status", accessorKey: "stage" },
+      { header: "Order ID", accessorKey: "OMS_ORDER_ID" },
+      { header: "Basket ID", accessorKey: "OMS_BASKET_ID" },
+      { header: "Email", accessorKey: "EMAIL_MESSAGE_ID" },
+      { header: "Subject", accessorKey: "CORRESPONDENCE_SUBJECT" },
+      { header: "Date", accessorKey: "ORDER_INCEPTION_DATE" },
+      // { header: "Status", accessorKey: "stage" },
     ],
     []
   );
 
-  const data = useMemo(() => mockData1, []);
+  // const data = useMemo(() => mockData1, []);
+
+  const [data, dataChange] = useState([]);
+
+  useEffect(() => {
+    fetch("http://insig-function-app.azurewebsites.net/api/orderdetails")
+      .then((resp) => {
+        return resp.json();
+      })
+      .then((resp) => {
+        dataChange(resp["orders"]);
+        console.log(resp);
+      })
+      .catch((e) => {
+        console.log(e.message);
+      });
+  }, []);
 
   const table = useMaterialReactTable({
     columns: columns1,
@@ -72,13 +88,18 @@ const Desk1 = () => {
     initialState: {
       density: "compact",
       expanded: true, //expand all groups by default
-      grouping: ["stage"], //an array of columns to group by by default (can be multiple)
+      // grouping: ["stage"], //an array of columns to group by by default (can be multiple)
       pagination: { pageIndex: 0, pageSize: 20 },
-      sorting: [{ id: "stage", desc: true }],
+      // sorting: [{ id: "stage", desc: true }],
     },
   });
 
-  return <MaterialReactTable table={table} />;
+  return (
+    <Box m="20px">
+      <Header title="Desk 1" />
+      <MaterialReactTable table={table} />
+    </Box>
+  );
 
   return (
     <Box m="20px">
