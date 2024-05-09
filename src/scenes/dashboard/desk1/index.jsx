@@ -40,7 +40,7 @@ const Desk1 = () => {
   const [data, dataChange] = useState([]);
 
   useEffect(() => {
-    fetch("http://insig-function-app.azurewebsites.net/api/orderdetails")
+    fetch("https://insig-function-app.azurewebsites.net/api/orderdetails")
       .then((resp) => {
         return resp.json();
       })
