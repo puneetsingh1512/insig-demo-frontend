@@ -5,6 +5,7 @@ import Sidebare from "./scenes/global/Sidebar";
 import Desk1 from "./scenes/dashboard/desk1";
 import Desk2 from "./scenes/dashboard/desk2";
 import { Routes, Route } from "react-router-dom";
+import Home from "./scenes/dashboard/home";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -18,6 +19,7 @@ function App() {
           <main className="content">
             <Topbar />
             <Routes>
+              <Route path="/" element={<Home />} />
               <Route path="/desk1" element={<Desk1 />} />
               <Route path="/desk2" element={<Desk2 />} />
             </Routes>

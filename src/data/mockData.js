@@ -40,3 +40,44 @@ export const mockData1 = [
     stage: "In progress",
   },
 ];
+export const pieData2 = [
+  {
+    id: "Success",
+    label: "Success",
+    value: 0,
+    color: "hsl(278, 70%, 50%)",
+  },
+  {
+    id: "In Progress",
+    label: "In Progress",
+    value: 3,
+    color: "hsl(109, 70%, 50%)",
+  },
+  {
+    id: "New",
+    label: "New",
+    value: 2,
+    color: "hsl(113, 70%, 50%)",
+  },
+];
+
+export const pieData1 = [
+  {
+    id: "Success",
+    label: "Success",
+    value: 2,
+    color: "hsl(278, 70%, 50%)",
+  },
+  {
+    id: "In Progress",
+    label: "In Progress",
+    value: 0,
+    color: "hsl(109, 70%, 50%)",
+  },
+  {
+    id: "New",
+    label: "New",
+    value: 1,
+    color: "hsl(113, 70%, 50%)",
+  },
+];
