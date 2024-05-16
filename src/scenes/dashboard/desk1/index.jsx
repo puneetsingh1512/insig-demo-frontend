@@ -1,36 +1,99 @@
-import { Box, useTheme, Stack } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { Box, useTheme } from "@mui/material";
 import Header from "../../../components/Header";
 import { tokens } from "../../../theme";
-import { mockData1 } from "../../../data/mockData";
 import {
   MaterialReactTable,
   useMaterialReactTable,
-  MRT_ExpandAllButton,
 } from "material-react-table";
 import { useEffect, useMemo, useState } from "react";
-// import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
+import { createTheme, ThemeProvider, Button } from "@mui/material";
+import { Link } from "react-router-dom";
 
 const Desk1 = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  const columns = [
-    { field: "order_id", headerName: "Order ID", flex: 1 },
-    { field: "basket_id", headerName: "Basket ID", flex: 1 },
-    { field: "sender", headerName: "Email", flex: 1 },
-    { field: "subject", headerName: "Subject", flex: 1 },
-    { field: "date", headerName: "Date", flex: 1 },
-  ];
+  const tableTheme = useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode: theme.palette.mode, //let's use the same dark/light mode as the global theme
 
+          primary: theme.palette.primary, //swap in the secondary color as the primary for the table
+
+          info: {
+            main: "rgb(104, 188, 227)", //add in a custom color for the toolbar alert background stuff
+          },
+
+          background: {
+            default:
+              theme.palette.mode === "light"
+                ? "#000" //random light yellow color for the background in light mode
+                : "#000", //pure black table in dark mode for fun
+          },
+        },
+
+        typography: {
+          button: {
+            textTransform: "none", //customize typography styles for all buttons in table by default
+
+            fontSize: "1.2rem",
+          },
+        },
+
+        components: {
+          MuiTooltip: {
+            styleOverrides: {
+              tooltip: {
+                fontSize: "1.1rem", //override to make tooltip font size larger
+              },
+            },
+          },
+
+          MuiSwitch: {
+            styleOverrides: {
+              thumb: {
+                color: "pink", //change the color of the switch thumb in the columns show/hide menu to pink
+              },
+            },
+          },
+        },
+      }),
+
+    [theme]
+  );
   const columns1 = useMemo(
     () => [
-      { header: "Order ID", accessorKey: "OMS_ORDER_ID" },
       { header: "Basket ID", accessorKey: "OMS_BASKET_ID" },
-      { header: "Email", accessorKey: "EMAIL_MESSAGE_ID" },
-      { header: "Subject", accessorKey: "CORRESPONDENCE_SUBJECT" },
+      { header: "Order ID", accessorKey: "ORDER_ID" },
+      { header: "Client ID", accessorKey: "CLIENT_ID" },
+      { header: "Sender", accessorKey: "CLIENT_EMAIL" },
+      {
+        header: "Email",
+        // accessorFn: (row) => `${row.CORRESPONDENCE_SUBJECT}`,
+        // Cell: ({ renderedCellValue, row }) => (
+        //   <Link to={`${row.USER_LINK}`}>{`${row.original.Sender}`}</Link>
+        // ),
+        accessorFn: (row) => row,
+        Cell: ({ cell }) => {
+          const row = cell.getValue();
+          return (
+            <Link
+              to={`${row.EMAIL_LINK}`}
+              target="_blank"
+            >{`${row.CORRESPONDENCE_SUBJECT}`}</Link>
+          );
+        },
+
+        // accessorKey: "CORRESPONDENCE_SUBJECT"
+      },
       { header: "Date", accessorKey: "ORDER_INCEPTION_DATE" },
-      // { header: "Status", accessorKey: "stage" },
+      { header: "Share", accessorKey: "CUSIP" },
+      { header: "Qty", accessorKey: "NO_OF_SHARES" },
+      { header: "Buy/Sell", accessorKey: "BUY_OR_SELL" },
+      { header: "Price", accessorKey: "ORDER_PRICE" },
+      { header: "Status", accessorKey: "STATUS_NAME" },
+      { header: "Status Group", accessorKey: "STATUS_GROUP" },
     ],
     []
   );
@@ -40,7 +103,7 @@ const Desk1 = () => {
   const [data, dataChange] = useState([]);
 
   useEffect(() => {
-    fetch("https://insig-function-app.azurewebsites.net/api/orderdetails")
+    fetch("https://insigeno-latest-fx.azurewebsites.net/api/orderdetails")
       .then((resp) => {
         return resp.json();
       })
@@ -56,6 +119,60 @@ const Desk1 = () => {
   const table = useMaterialReactTable({
     columns: columns1,
     data,
+    renderTopToolbar: ({ table }) => (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          backgroundColor: colors.rowColor[1000],
+        }}
+      >
+        <Box sx={{ display: "flex", gap: "1rem", ml: "40px" }}>
+          <h2>
+            <font color="white">OMS Blotter</font>
+          </h2>
+        </Box>
+        <Box sx={{ display: "flex", gap: "1rem", mr: "40px" }}>
+          <Button
+            size="small"
+            sx={{
+              backgroundColor: colors.rowColor[500],
+            }}
+            onClick={() => {
+              alert("Add Order");
+            }}
+            variant="contained"
+          >
+            ADD ORDER
+          </Button>
+          <Button
+            size="small"
+            sx={{
+              backgroundColor: colors.rowColor[500],
+            }}
+            onClick={() => {
+              alert("Assign Order");
+            }}
+            variant="contained"
+          >
+            ASSIGN
+          </Button>
+          <Button
+            size="small"
+            sx={{
+              backgroundColor: colors.rowColor[500],
+            }}
+            onClick={() => {
+              alert("Take Ownership");
+            }}
+            variant="contained"
+          >
+            TAKE OWNERSHIP
+          </Button>
+        </Box>
+      </Box>
+    ),
     // displayColumnDefOptions: {
     //   "mrt-row-expand": {
     //     Header: () => (
@@ -83,63 +200,50 @@ const Desk1 = () => {
     //   },
     // },
     enableGrouping: true,
+    enableTopToolbar: true,
+    positionToolbarAlertBanner: "none",
     enableColumnResizing: true,
     groupedColumnMode: "reorder",
     initialState: {
       density: "compact",
       expanded: true, //expand all groups by default
-      // grouping: ["stage"], //an array of columns to group by by default (can be multiple)
+      grouping: ["STATUS_GROUP"], //an array of columns to group by by default (can be multiple)
       pagination: { pageIndex: 0, pageSize: 20 },
-      // sorting: [{ id: "stage", desc: true }],
+      sorting: [{ id: "STATUS_GROUP", desc: true }],
     },
+    muiTableHeadRowProps: {
+      sx: (theme) => ({
+        backgroundColor: colors.rowColor[900],
+      }),
+    },
+    muiColumnActionsButtonProps: {
+      sx: (theme) => ({
+        backgroundColor: colors.rowColor[900],
+      }),
+    },
+    muiBottomToolbarProps: {
+      sx: (theme) => ({
+        backgroundColor: colors.rowColor[900],
+      }),
+    },
+    muiTableBodyRowProps: ({ row }) => ({
+      sx: (theme) => ({
+        backgroundColor:
+          row.depth === 0
+            ? colors.rowColor[900]
+            : row.id % 2 === 0
+            ? colors.grey[900]
+            : colors.grey[1000],
+      }),
+    }),
   });
 
   return (
     <Box m="20px">
       <Header title="Desk 1" />
-      <MaterialReactTable table={table} />
-    </Box>
-  );
-
-  return (
-    <Box m="20px">
-      <Header title="Desk 1" />
-
-      <Box
-        m="40px 0 0 0"
-        height="75vh"
-        sx={{
-          "& .MuiDataGrid-root": {
-            border: "none",
-          },
-          "& .MuiDataGrid-cell": {
-            borderBottom: "none",
-          },
-          "& .name-column--cell": {
-            color: colors.greenAccent[300],
-          },
-          "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: colors.blueAccent[700],
-            borderBottom: "none",
-          },
-          "& .MuiDataGrid-virtualScrollerContent": {
-            backgroundColor: colors.primary[400],
-          },
-          "& .MuiDataGrid-footerContainer": {
-            borderTop: "none",
-            backgroundColor: colors.blueAccent[700],
-          },
-          "& .MuiCheckbox-root": {
-            color: `${colors.greenAccent[200]} !important`,
-          },
-        }}
-      >
-        <DataGrid
-          rows={mockData1}
-          columns={columns}
-          getRowId={(row) => row.sender + row.subject}
-        />
-      </Box>
+      <ThemeProvider theme={tableTheme}>
+        <MaterialReactTable table={table} />
+      </ThemeProvider>
     </Box>
   );
 };

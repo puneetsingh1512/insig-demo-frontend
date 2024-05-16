@@ -1,7 +1,5 @@
 import {
   Box,
-  Button,
-  ButtonGroup,
   IconButton,
   useTheme,
   ToggleButtonGroup,
@@ -9,14 +7,10 @@ import {
 } from "@mui/material";
 import { useContext, useState } from "react";
 import { ColorModeContext, tokens } from "../../theme";
-import InputBase from "@mui/material/InputBase";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
-import DeskIcon from "@mui/icons-material/Desk";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
-import { Link, NavLink } from "react-router-dom";
-import Logo1 from "../../data/logo1.png";
-import Logo2 from "../../data/logo2.png";
+import { NavLink } from "react-router-dom";
 
 const Topbar = () => {
   const theme = useTheme();
@@ -30,7 +24,14 @@ const Topbar = () => {
   };
 
   return (
-    <Box display="flex" justifyContent="space-between" p={2}>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        backgroundColor: colors.blueAccent[900],
+      }}
+    >
       {/* <Box display="flex" style={{}}>
         <NavLink to="/">
           <img
@@ -43,7 +44,7 @@ const Topbar = () => {
           />
         </NavLink>
       </Box> */}
-      <Box display="flex">
+      <Box display="flex" ml="40px">
         <NavLink to="/">
           <IconButton>
             <HomeRoundedIcon />
@@ -63,8 +64,7 @@ const Topbar = () => {
             to={"/desk1"}
             variant="contained"
             style={{
-              margin: "10px 0 20px 0",
-              color: "white",
+              margin: "10px 0 10px 0",
               background: colors.primary[400],
             }}
           >
@@ -75,8 +75,7 @@ const Topbar = () => {
             to={"/desk2"}
             variant="contained"
             style={{
-              margin: "10px 0 20px 0",
-              color: "white",
+              margin: "10px 0 10px 0",
               background: colors.primary[400],
             }}
           >
@@ -117,7 +116,7 @@ const Topbar = () => {
           </Link>
         </ButtonGroup> */}
       </Box>
-      <Box display="flex">
+      <Box display="flex" mr="40px">
         <IconButton onClick={colorMode.toggleColorMode}>
           {theme.palette.mode === "dark" ? (
             <DarkModeOutlinedIcon />
@@ -125,7 +124,6 @@ const Topbar = () => {
             <LightModeOutlinedIcon />
           )}
         </IconButton>
-        <IconButton></IconButton>
       </Box>
     </Box>
   );

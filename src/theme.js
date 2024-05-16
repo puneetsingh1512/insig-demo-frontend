@@ -14,6 +14,7 @@ export const tokens = (mode) => ({
           700: "#3d3d3d",
           800: "#292929",
           900: "#141414",
+          1000: "rgb(0,0,0)",
         },
         primary: {
           100: "#d0d1d5",
@@ -59,6 +60,13 @@ export const tokens = (mode) => ({
           800: "#2a2d64",
           900: "#151632",
         },
+        rowColor: {
+          100: "#2d383c",
+          200: "#414c50",
+          500: "#091340",
+          900: "#192428",
+          1000: "#313692",
+        },
       }
     : {
         grey: {
@@ -71,6 +79,7 @@ export const tokens = (mode) => ({
           700: "#a3a3a3",
           800: "#c2c2c2",
           900: "#e0e0e0",
+          1000: "rgb(255,255,255)",
         },
         primary: {
           100: "#040509",
@@ -116,6 +125,13 @@ export const tokens = (mode) => ({
           800: "#c3c6fd",
           900: "#e1e2fe",
         },
+        rowColor: {
+          100: "#e0e0e0",
+          200: "rgb(255,255,255)",
+          500: "#2691c9",
+          900: "#e1e2fe",
+          1000: "#091340",
+        },
       }),
 });
 
@@ -139,7 +155,7 @@ export const themeSettings = (mode) => {
               light: colors.grey[100],
             },
             background: {
-              default: colors.primary[500],
+              default: "#192428", //colors.primary[500],
             },
           }
         : {
@@ -197,7 +213,7 @@ export const ColorModeContext = createContext({
 });
 
 export const useMode = () => {
-  const [mode, setMode] = useState("dark");
+  const [mode, setMode] = useState("light");
 
   const colorMode = useMemo(
     () => ({
