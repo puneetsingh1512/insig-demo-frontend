@@ -8,11 +8,12 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { createTheme, ThemeProvider, Button } from "@mui/material";
 import { Link } from "react-router-dom";
+import { CustomSwitch } from "../../../components/CustomSwitch";
 
 const Desk1 = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-
+  const [rowSelection, setRowSelection] = useState({});
   const tableTheme = useMemo(
     () =>
       createTheme({
@@ -90,31 +91,40 @@ const Desk1 = () => {
       { header: "Date", accessorKey: "ORDER_INCEPTION_DATE" },
       { header: "Share", accessorKey: "CUSIP" },
       { header: "Qty", accessorKey: "NO_OF_SHARES" },
+      { header: "Status", accessorKey: "STATUS_NAME" },
       { header: "Buy/Sell", accessorKey: "BUY_OR_SELL" },
       { header: "Price", accessorKey: "ORDER_PRICE" },
-      { header: "Status", accessorKey: "STATUS_NAME" },
       { header: "Status Group", accessorKey: "STATUS_GROUP" },
     ],
     []
   );
-
-  // const data = useMemo(() => mockData1, []);
-
   const [data, dataChange] = useState([]);
+  const [isRefetching, setIsRefetching] = useState(false);
+  const [isLive, setIsLive] = useState(false);
+  const [count, setCount] = useState(0);
 
-  useEffect(() => {
+  const fetchData = () => {
     fetch("https://insigeno-latest-fx.azurewebsites.net/api/orderdetails")
       .then((resp) => {
         return resp.json();
       })
       .then((resp) => {
         dataChange(resp["orders"]);
-        console.log(resp);
       })
       .catch((e) => {
         console.log(e.message);
       });
-  }, []);
+  };
+  const handleChange = (event) => {
+    setIsLive(!isLive);
+  };
+
+  useEffect(() => {
+    fetchData();
+    const timer = setTimeout(() => isLive && setCount(count + 1), 10e3);
+    console.log("refreshing data");
+    return () => clearTimeout(timer);
+  }, [isRefetching, isLive, count]);
 
   const table = useMaterialReactTable({
     columns: columns1,
@@ -133,77 +143,87 @@ const Desk1 = () => {
             <font color="white">OMS Blotter</font>
           </h2>
         </Box>
+        <CustomSwitch onChange={handleChange} />
         <Box sx={{ display: "flex", gap: "1rem", mr: "40px" }}>
           <Button
             size="small"
             sx={{
-              backgroundColor: colors.rowColor[500],
+              backgroundColor: colors.greenAccent[400],
             }}
             onClick={() => {
-              alert("Add Order");
+              // alert("Assign Order");
+              const orderId = table
+                .getSelectedRowModel()
+                .rows.map((row) => row.original.ORDER_ID);
+              if (orderId.length > 1) {
+                alert("Please Select only a single order");
+              } else {
+                fetch(
+                  `https://insigeno-latest-fx.azurewebsites.net/api/updatestatus/${orderId}/Yes`
+                ).then((resp) => {
+                  resp.status === 204
+                    ? alert("Order Updated")
+                    : alert("Update Failed");
+                });
+                setIsRefetching(true);
+              }
             }}
             variant="contained"
+            disabled={!table.getIsSomeRowsSelected()}
           >
-            ADD ORDER
+            Proceed
           </Button>
           <Button
             size="small"
             sx={{
-              backgroundColor: colors.rowColor[500],
+              backgroundColor: colors.redAccent[500],
             }}
             onClick={() => {
-              alert("Assign Order");
+              // alert("Take Ownership");
+              const orderId = table
+                .getSelectedRowModel()
+                .rows.map((row) => row.original.ORDER_ID);
+              if (orderId.length > 1) {
+                alert("Please Select only a single order");
+              } else {
+                fetch(
+                  `https://insigeno-latest-fx.azurewebsites.net/api/updatestatus/${orderId}/No`
+                ).then((resp) => {
+                  resp.status === 204
+                    ? alert("Order Updated")
+                    : alert("Update Failed");
+                });
+                fetch(
+                  "https://insigeno-latest-fx.azurewebsites.net/api/orderdetails"
+                )
+                  .then((resp) => {
+                    return resp.json();
+                  })
+                  .then((resp) => {
+                    dataChange(resp["orders"]);
+                  });
+                setIsRefetching(true);
+              }
             }}
             variant="contained"
+            disabled={!table.getIsSomeRowsSelected()}
           >
-            ASSIGN
-          </Button>
-          <Button
-            size="small"
-            sx={{
-              backgroundColor: colors.rowColor[500],
-            }}
-            onClick={() => {
-              alert("Take Ownership");
-            }}
-            variant="contained"
-          >
-            TAKE OWNERSHIP
+            Cancel
           </Button>
         </Box>
       </Box>
     ),
-    // displayColumnDefOptions: {
-    //   "mrt-row-expand": {
-    //     Header: () => (
-    //       <Stack direction="row" alignItems="center">
-    //         <MRT_ExpandAllButton table={table} />
-    //         <Box>Stage</Box>
-    //       </Stack>
-    //     ),
-    //     GroupedCell: ({ row, table }) => {
-    //       const { grouping } = table.getState();
-    //       return row.getValue(grouping[grouping.length - 1]);
-    //     },
-    //     enableResizing: true,
-    //     muiTableBodyCellProps: ({ row }) => ({
-    //       sx: (theme) => ({
-    //         color:
-    //           row.depth === 0
-    //             ? theme.palette.primary.main
-    //             : row.depth === 1
-    //             ? theme.palette.secondary.main
-    //             : undefined,
-    //       }),
-    //     }),
-    //     size: 200,
-    //   },
-    // },
+    onRowSelectionChange: setRowSelection,
+    state: { rowSelection },
+    enableSelectAll: false,
+    enableRowSelection: (row) =>
+      row.original.STATUS_NAME !== "Cancelled" &&
+      row.original.STATUS_NAME !== "Completed",
     enableGrouping: true,
+    groupedColumnMode: "remove",
     enableTopToolbar: true,
     positionToolbarAlertBanner: "none",
     enableColumnResizing: true,
-    groupedColumnMode: "reorder",
     initialState: {
       density: "compact",
       expanded: true, //expand all groups by default
@@ -237,7 +257,6 @@ const Desk1 = () => {
       }),
     }),
   });
-
   return (
     <Box m="20px">
       <Header title="Desk 1" />
