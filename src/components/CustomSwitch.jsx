@@ -41,7 +41,7 @@ export const CustomSwitch = styled(Switch)(({ theme }) => {
       borderRadius: 40,
       border: "none",
       borderWidth,
-      backgroundColor: colors.redAccent[500],
+      backgroundColor: colors.grey[500],
       opacity: 1,
       transition: theme.transitions.create(["background-color", "border"]),
       boxSizing: "border-box",
