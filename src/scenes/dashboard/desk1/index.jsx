@@ -123,6 +123,7 @@ const Desk1 = () => {
     fetchData();
     const timer = setTimeout(() => isLive && setCount(count + 1), 30e3);
     console.log("refreshing data");
+    setIsRefetching(false);
     return () => clearTimeout(timer);
   }, [isRefetching, isLive, count]);
 
@@ -166,7 +167,8 @@ const Desk1 = () => {
                     : alert("Update Failed");
                 });
                 table.resetRowSelection();
-                fetchData();
+                // fetchData();
+                setIsRefetching(!isRefetching);
               }
             }}
             variant="contained"
@@ -195,7 +197,8 @@ const Desk1 = () => {
                     : alert("Update Failed");
                 });
                 table.resetRowSelection();
-                fetchData();
+                // fetchData();
+                setIsRefetching(!isRefetching);
               }
             }}
             variant="contained"
