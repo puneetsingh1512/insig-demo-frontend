@@ -88,7 +88,7 @@ const Desk1 = () => {
 
         // accessorKey: "CORRESPONDENCE_SUBJECT"
       },
-      { header: "Date", accessorKey: "ORDER_INCEPTION_DATE" },
+      { header: "Date", accessorKey: "DATE_TIME" },
       { header: "Share", accessorKey: "CUSIP" },
       { header: "Qty", accessorKey: "NO_OF_SHARES" },
       { header: "Status", accessorKey: "STATUS_NAME" },
