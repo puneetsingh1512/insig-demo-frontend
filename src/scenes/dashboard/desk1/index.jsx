@@ -99,7 +99,6 @@ const Desk1 = () => {
     []
   );
   const [data, dataChange] = useState([]);
-  const [isRefetching, setIsRefetching] = useState(false);
   const [isLive, setIsLive] = useState(false);
   const [count, setCount] = useState(0);
 
@@ -121,10 +120,10 @@ const Desk1 = () => {
 
   useEffect(() => {
     fetchData();
-    const timer = setTimeout(() => isLive && setCount(count + 1), 10e3);
+    const timer = setTimeout(() => isLive && setCount(count + 1), 30e3);
     console.log("refreshing data");
     return () => clearTimeout(timer);
-  }, [isRefetching, isLive, count]);
+  }, [isLive, count]);
 
   const table = useMaterialReactTable({
     columns: columns1,
@@ -165,6 +164,7 @@ const Desk1 = () => {
                     ? alert("Order Updated")
                     : alert("Update Failed");
                 });
+                table.resetRowSelection();
                 fetchData();
               }
             }}
@@ -193,6 +193,7 @@ const Desk1 = () => {
                     ? alert("Order Updated")
                     : alert("Update Failed");
                 });
+                table.resetRowSelection();
                 fetchData();
               }
             }}
