@@ -160,7 +160,7 @@ const Desk1 = () => {
                 alert("Please Select only a single order");
               } else {
                 fetch(
-                  `https://insigeno-latest-fx.azurewebsites.net/api/updatestatus1/${orderId}/Yes`
+                  `https://insigeno-latest-fx.azurewebsites.net/api/updatestatus/${orderId}/Yes`
                 ).then((resp) => {
                   resp.status === 204
                     ? alert("Order Updated")
