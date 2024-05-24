@@ -99,6 +99,7 @@ const Desk1 = () => {
     []
   );
   const [data, dataChange] = useState([]);
+  const [isRefetching, setIsRefetching] = useState(false);
   const [isLive, setIsLive] = useState(false);
   const [count, setCount] = useState(0);
 
@@ -123,7 +124,7 @@ const Desk1 = () => {
     const timer = setTimeout(() => isLive && setCount(count + 1), 30e3);
     console.log("refreshing data");
     return () => clearTimeout(timer);
-  }, [isLive, count]);
+  }, [isRefetching, isLive, count]);
 
   const table = useMaterialReactTable({
     columns: columns1,
@@ -158,7 +159,7 @@ const Desk1 = () => {
                 alert("Please Select only a single order");
               } else {
                 fetch(
-                  `https://insigeno-latest-fx.azurewebsites.net/api/updatestatus/${orderId}/Yes`
+                  `https://insigeno-latest-fx.azurewebsites.net/api/updatestatus1/${orderId}/Yes`
                 ).then((resp) => {
                   resp.status === 204
                     ? alert("Order Updated")
