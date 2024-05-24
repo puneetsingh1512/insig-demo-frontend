@@ -114,6 +114,7 @@ const Desk1 = () => {
       .catch((e) => {
         console.log(e.message);
       });
+    setIsRefetching(false);
   };
   const handleChange = (event) => {
     setIsLive(!isLive);
