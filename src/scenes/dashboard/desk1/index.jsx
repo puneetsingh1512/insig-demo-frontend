@@ -114,7 +114,6 @@ const Desk1 = () => {
       .catch((e) => {
         console.log(e.message);
       });
-    setIsRefetching(false);
   };
   const handleChange = (event) => {
     setIsLive(!isLive);
@@ -166,7 +165,7 @@ const Desk1 = () => {
                     ? alert("Order Updated")
                     : alert("Update Failed");
                 });
-                setIsRefetching(true);
+                fetchData();
               }
             }}
             variant="contained"
@@ -194,16 +193,7 @@ const Desk1 = () => {
                     ? alert("Order Updated")
                     : alert("Update Failed");
                 });
-                fetch(
-                  "https://insigeno-latest-fx.azurewebsites.net/api/orderdetails"
-                )
-                  .then((resp) => {
-                    return resp.json();
-                  })
-                  .then((resp) => {
-                    dataChange(resp["orders"]);
-                  });
-                setIsRefetching(true);
+                fetchData();
               }
             }}
             variant="contained"
