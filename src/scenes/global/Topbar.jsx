@@ -10,6 +10,7 @@ import { ColorModeContext, tokens } from "../../theme";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
+import KeyIcon from "@mui/icons-material/Key";
 import { NavLink } from "react-router-dom";
 
 const Topbar = () => {
@@ -21,6 +22,12 @@ const Topbar = () => {
 
   const handleChange = (event, newAlignment) => {
     setAlignment(newAlignment);
+  };
+  const openAuth = () => {
+    window.open(
+      "https://insigeno-latest-fx.azurewebsites.net/api/authorize",
+      "_blank"
+    );
   };
 
   return (
@@ -123,6 +130,9 @@ const Topbar = () => {
           ) : (
             <LightModeOutlinedIcon />
           )}
+        </IconButton>
+        <IconButton onClick={openAuth}>
+          <KeyIcon />
         </IconButton>
       </Box>
     </Box>

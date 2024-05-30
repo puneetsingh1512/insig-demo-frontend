@@ -146,7 +146,6 @@ const Desk1 = () => {
       setIsLoading(false);
     }
     const timer = setTimeout(() => isLive && setCount(count + 1), 60e3);
-    console.log("refreshing data");
     return () => clearTimeout(timer);
   }, [isRefetching, isLoading, isLive, count]);
 
