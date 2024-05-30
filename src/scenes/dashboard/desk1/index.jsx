@@ -145,7 +145,7 @@ const Desk1 = () => {
       loadData();
       setIsLoading(false);
     }
-    const timer = setTimeout(() => isLive && setCount(count + 1), 60e3);
+    const timer = setTimeout(() => isLive && setCount(count + 1), 15e3);
     return () => clearTimeout(timer);
   }, [isRefetching, isLoading, isLive, count]);
 
