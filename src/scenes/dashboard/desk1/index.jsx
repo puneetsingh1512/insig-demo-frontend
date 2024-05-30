@@ -6,9 +6,11 @@ import {
   useMaterialReactTable,
 } from "material-react-table";
 import { useEffect, useMemo, useState } from "react";
-import { createTheme, ThemeProvider, Button } from "@mui/material";
+import { createTheme, ThemeProvider, Button, IconButton } from "@mui/material";
 import { Link } from "react-router-dom";
 import { CustomSwitch } from "../../../components/CustomSwitch";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import MailOutlineIcon from "@mui/icons-material/MailOutline";
 
 const Desk1 = () => {
   const theme = useTheme();
@@ -100,6 +102,7 @@ const Desk1 = () => {
   );
   const [data, dataChange] = useState([]);
   const [isRefetching, setIsRefetching] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isLive, setIsLive] = useState(false);
   const [count, setCount] = useState(0);
 
@@ -115,17 +118,37 @@ const Desk1 = () => {
         console.log(e.message);
       });
   };
+  const loadData = () => {
+    fetch(
+      "https://insigeno-latest-fx.azurewebsites.net/api/emailExtractorLoader"
+    )
+      .then((resp) => {
+        return resp.json();
+      })
+      .then((resp) => {
+        dataChange(resp);
+      })
+      .catch((e) => {
+        console.log(e.message);
+      });
+  };
   const handleChange = (event) => {
     setIsLive(!isLive);
   };
 
   useEffect(() => {
-    fetchData();
-    const timer = setTimeout(() => isLive && setCount(count + 1), 30e3);
+    if (isRefetching === true) {
+      fetchData();
+      setIsRefetching(false);
+    }
+    if (isLoading === true || isLive === true) {
+      loadData();
+      setIsLoading(false);
+    }
+    const timer = setTimeout(() => isLive && setCount(count + 1), 60e3);
     console.log("refreshing data");
-    setIsRefetching(false);
     return () => clearTimeout(timer);
-  }, [isRefetching, isLive, count]);
+  }, [isRefetching, isLoading, isLive, count]);
 
   const table = useMaterialReactTable({
     columns: columns1,
@@ -144,7 +167,26 @@ const Desk1 = () => {
             <font color="white">OMS Blotter</font>
           </h2>
         </Box>
-        <CustomSwitch onChange={handleChange} />
+        <Box display="flex">
+          <CustomSwitch onChange={handleChange} />
+          <IconButton>
+            <RefreshIcon
+              style={{ color: "white" }}
+              onClick={() => {
+                setIsRefetching(!isRefetching);
+              }}
+            />
+          </IconButton>
+          <IconButton>
+            <MailOutlineIcon
+              style={{ color: "white" }}
+              onClick={() => {
+                setIsLoading(!isLoading);
+              }}
+            />
+          </IconButton>
+        </Box>
+
         <Box sx={{ display: "flex", gap: "1rem", mr: "40px" }}>
           <Button
             size="small"
